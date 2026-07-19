@@ -1,0 +1,42 @@
+# Gradle / build output
+.gradle/
+build/
+*/build/
+out/
+*/out/
+
+# Minecraft run directories
+run/
+runs/
+*/run/
+*/runs/
+
+# IDE
+.idea/
+*.iml
+*.ipr
+*.iws
+.vscode/
+.classpath
+.project
+.settings/
+bin/
+eclipse/
+
+# Crash/heap artifacts
+*.hprof
+hs_err_pid*.log
+
+# OS
+Thumbs.db
+.DS_Store
+
+# Local reference material (not part of the project)
+Documentation-main/
+MCglTF-1.19-Forge/
+MCglTF-Example-1.19.3-Forge/
+Valkyrien-Skies-2-1.20.1-main/
+geckolib.wiki/
+jgltf-model-2.0.4.txt
+Screenshot_*.png
+pasted file.png

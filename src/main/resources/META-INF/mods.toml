@@ -1,0 +1,30 @@
+modLoader="javafml"
+loaderVersion="[47,)"
+license="LGPL-3.0-or-later"
+issueTrackerURL="https://github.com/phe6/polymesh/issues"
+
+[[mods]]
+modId="polymesh"
+version="1.0.0"
+displayName="Polymesh"
+authors="Phe"
+displayURL="https://github.com/phe6/polymesh"
+# Client rendering library: servers without it must accept clients that have it, and vice versa.
+displayTest="IGNORE_ALL_VERSION"
+description='''
+A runtime library for glTF 2.0 rendering, animation, and model metadata integration in Minecraft.
+'''
+
+[[dependencies.polymesh]]
+modId="forge"
+mandatory=true
+versionRange="[47.1,)"
+ordering="NONE"
+side="BOTH"
+
+[[dependencies.polymesh]]
+modId="minecraft"
+mandatory=true
+versionRange="[1.20.1,1.21)"
+ordering="NONE"
+side="BOTH"

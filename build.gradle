@@ -1,0 +1,130 @@
+plugins {
+    id 'eclipse'
+    id 'idea'
+    id 'maven-publish'
+    id 'net.minecraftforge.gradle' version '[6.0,6.2)'
+}
+
+def mod_version = '1.0.0'
+def maven_group = 'dev.phe.polymesh'
+def archives_base_name = 'polymesh'
+
+version = mod_version
+group = maven_group
+
+base {
+    archivesName = archives_base_name
+}
+
+java {
+    toolchain {
+        languageVersion = JavaLanguageVersion.of(17)
+    }
+    withSourcesJar()
+}
+
+minecraft {
+    mappings channel: 'official', version: '1.20.1'
+    copyIdeResources = true
+
+    runs {
+        client {
+            workingDirectory project.file('run')
+            property 'forge.logging.markers', 'REGISTRIES'
+            property 'forge.logging.console.level', 'debug'
+            mods {
+                polymesh {
+                    source sourceSets.main
+                }
+            }
+        }
+
+        server {
+            workingDirectory project.file('run')
+            property 'forge.logging.markers', 'REGISTRIES'
+            property 'forge.logging.console.level', 'debug'
+            mods {
+                polymesh {
+                    source sourceSets.main
+                }
+            }
+        }
+    }
+}
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    minecraft 'net.minecraftforge:forge:1.20.1-47.4.20'
+
+    implementation 'de.javagl:jgltf-model:2.0.4'
+    implementation 'de.javagl:jgltf-impl-v1:2.0.4'
+    implementation 'de.javagl:jgltf-impl-v2:2.0.4'
+    implementation 'com.fasterxml.jackson.core:jackson-annotations:2.13.4'
+    implementation 'com.fasterxml.jackson.core:jackson-core:2.13.4'
+    implementation 'com.fasterxml.jackson.core:jackson-databind:2.13.4.2'
+    jarJar(group: 'de.javagl', name: 'jgltf-model', version: '[2.0.4,3.0.0)') {
+        jarJar.ranged(it, '[2.0.4,3.0.0)')
+    }
+    jarJar(group: 'de.javagl', name: 'jgltf-impl-v1', version: '[2.0.4,3.0.0)') {
+        jarJar.ranged(it, '[2.0.4,3.0.0)')
+    }
+    jarJar(group: 'de.javagl', name: 'jgltf-impl-v2', version: '[2.0.4,3.0.0)') {
+        jarJar.ranged(it, '[2.0.4,3.0.0)')
+    }
+    jarJar(group: 'com.fasterxml.jackson.core', name: 'jackson-annotations', version: '2.13.4') {
+        jarJar.ranged(it, '[2.13.4,2.14.0)')
+    }
+    jarJar(group: 'com.fasterxml.jackson.core', name: 'jackson-core', version: '2.13.4') {
+        jarJar.ranged(it, '[2.13.4,2.14.0)')
+    }
+    jarJar(group: 'com.fasterxml.jackson.core', name: 'jackson-databind', version: '2.13.4.2') {
+        jarJar.ranged(it, '[2.13.4.2,2.14.0)')
+    }
+}
+
+jarJar.enable()
+
+// LGPL-3.0-or-later requires distributing the license texts with every jar.
+tasks.withType(Jar).configureEach {
+    from(rootProject.file('LICENSE')) { into 'META-INF' }
+    from(rootProject.file('LICENSE.LESSER')) { into 'META-INF' }
+}
+
+tasks.named('jar', Jar).configure {
+    archiveClassifier = 'thin'
+    duplicatesStrategy = DuplicatesStrategy.EXCLUDE
+}
+
+tasks.register('devJar', Jar) {
+    archiveClassifier = 'dev'
+    from sourceSets.main.output
+    duplicatesStrategy = DuplicatesStrategy.EXCLUDE
+}
+
+tasks.named('jarJar', Jar).configure {
+    archiveClassifier = 'forge'
+    duplicatesStrategy = DuplicatesStrategy.EXCLUDE
+    finalizedBy 'reobfJarJar'
+}
+
+tasks.assemble {
+    dependsOn tasks.named('jarJar')
+    dependsOn tasks.named('devJar')
+}
+
+publishing {
+    publications {
+        mavenJava(MavenPublication) {
+            artifact tasks.named('jar')
+            artifact tasks.named('devJar')
+            artifact tasks.named('sourcesJar')
+        }
+    }
+}
+
+tasks.withType(JavaCompile).configureEach {
+    options.encoding = 'UTF-8'
+}
